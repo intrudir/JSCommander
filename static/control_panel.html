@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Panel</title>
+</head>
+<body>
+    <h1>Control Panel</h1>
+    <textarea id="command"></textarea>
+    <button onclick="sendCommand()">Send Command</button>
+    <div id="log"></div> <!-- Log will be displayed here -->
+
+    <script>
+        async function sendCommand() {
+            const command = document.getElementById("command").value;
+            const logDiv = document.getElementById("log");
+            
+            const response = await fetch("http://localhost:8080/send_command", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ command }),
+            });
+
+            if (response.ok) {
+                logDiv.innerHTML += "Command sent successfully.<br>"; // Append message to log
+                console.log("Command sent successfully.");
+            } else {
+                logDiv.innerHTML += "Failed to send command.<br>"; // Append message to log
+                console.log("Failed to send command.");
+            }
+        }
+    </script>
+</body>
+</html>

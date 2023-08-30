@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Client</title>
+</head>
+<body>
+    <h1>Test Client with Unsanitized Input</h1>
+
+    <label for="unsafeInput">Enter Text: </label>
+    <input type="text" id="unsafeInput">
+    <button onclick="addUnsafeContent()">Add Content</button>
+
+    <div id="content">
+        <!-- This is where the unsanitized content will be added -->
+    </div>
+
+    <script>
+        function addUnsafeContent() {
+            const input = document.getElementById("unsafeInput").value;
+            // Unsafely adding user input directly to DOM
+            document.getElementById("content").innerHTML += input;
+        }
+    </script>
+</body>
+</html>
