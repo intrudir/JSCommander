@@ -26,7 +26,7 @@ globalThis.start ??= () => {
     return;
   }
 
-  const socket = new WebSocket(`ws://localhost:8765/`);
+  const socket = new WebSocket(`ws://cm2.bar.com:8765/`);
   globalThis.socket = socket;
 
   const closed = () => {

